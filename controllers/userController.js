@@ -1,15 +1,19 @@
 const { User, Thought } = require('../models');
 
 ////////////////////////////////////////Error Handler\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-const handleError = (res, error) => {
+const handleError500 = (res, error) => {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
 }
 
+const handleError404 = (res, message) => {
+    res.status(404).json({message: 'Task Failed' });
+}
 
 
-////////////////////////////////////////Get All Users\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
 const userController = {
+////////////////////////////////////////Get All Users\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     async getUsers(req, res) {
         try {
             const users = await User.find()
@@ -19,7 +23,7 @@ const userController = {
 
             res.status(200).json(users);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -32,12 +36,13 @@ const userController = {
                 .populate({ path: 'friends', select: '-__v'});
             
                 if(!user) {
-                    res.status(404).json({ message: 'No user with that ID   ;'})
+                    handleError404(res);
+                    return;
                 }
 
                 res.status(200).json(user);
             } catch (err) {
-                handleError(res, err);
+                handleError500(res, err);
             }
         },
 
@@ -48,7 +53,7 @@ const userController = {
             const user = await User.create(req.body);
             res.status(200).json(user);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -63,11 +68,13 @@ const userController = {
             );
 
             if (!user) {
-                res.status(404).json({ message: 'No user with this ID' });
+                handleError404(res);
+                return;
+            
             }
             res.status(200).json(user);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -75,10 +82,21 @@ const userController = {
 
     async deleteUser(req, res) {
         try {
+            const user = await User.findOneAndDelete({
+                _id: req.params.thoughtId,
+            });
+            if(!user) {
+                handleError404(res);
+                return;
             
+            }
+            await Thought.deleteMany({ _id: { $in: user.thoughts} });
+            res.status(200).json({
+                message: 'User and their thoughts successfully deleted'
+            });
 
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -86,9 +104,19 @@ const userController = {
 
     async addFriend(req, res) {
         try {
-
+            const friend = await User.findOneAndUpdate (
+                { _id: req.params.userId },
+                { $addToSet: { friends: req.params.friendId } },
+                { runValidators: true, new: true }
+            );
+            if (!friend) {
+                handleError404(res);
+                return;
+            
+            }
+            res.status(200).json(friend);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -96,12 +124,21 @@ const userController = {
 
       async deleteFriend(req, res) {
         try {
-
+            const friend = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $pull: { friends: req.params.friendId } },
+                { runValidators: true, new: true }
+            );
+            if (!friend) {
+                handleError404(res);
+                return;
+            }
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
 }
 
 module.exports = userController;
+
