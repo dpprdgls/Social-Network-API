@@ -1,9 +1,13 @@
 const { User, Thought } = require('../models');
 
-const handleError = (res, err) => {
+const handleError500 = (res, err) => {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
 };
+
+const handleError404 = (res, message) => {
+    res.status(404).json({ message: 'Task Failed'});
+}
 
 const thoughtController = {
 
@@ -14,7 +18,7 @@ const thoughtController = {
             const thoughts = await Thought.find();
             res.status(200).json(thoughts);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -24,11 +28,12 @@ const thoughtController = {
         try {
             const thought = await Thought.findOne({ _id: req.params.thoughtId });
             if (!thought) {
-                res.status(404).json({ message: "No thought found" });
+                handleError404(res);
+                return;
             }
             res.status(200).json(thought);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -44,7 +49,7 @@ const thoughtController = {
             );
             res.status(201).json({ thought, user });
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -58,11 +63,12 @@ const thoughtController = {
                 { runValidators: true, new: true }
             );
             if (!thought) {
-                res.status(404).json({ message: "No thought found" });
+                handleError404(res);
+                return;
             }
             res.status(200).json(thought);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -74,11 +80,12 @@ const thoughtController = {
             });
 
             if(!thought){
-                res.status(404).json({ message: "No thought found" });
+                handleError404(res);
+                return;
             }
             res.status(200).json({ message: "Thought and associated reactions successfully deleted."});
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -92,11 +99,12 @@ const thoughtController = {
             );
             
             if (!reaction) {
-                res.status(404).json({ message: "No thought found" });
+                handleError404(res);
+                return;
             }
             res.status(200).json(reaction);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     },
 
@@ -113,11 +121,12 @@ const thoughtController = {
             );
 
             if (!reaction) {
-                res.status(404).json( { message: "No reaction found" });
+                handleError404(res);
+                return;
             }
             res.status(200).json(reaction);
         } catch (err) {
-            handleError(res, err);
+            handleError500(res, err);
         }
     }
 };
