@@ -1,5 +1,9 @@
 const { User, Thought } = require('../models');
 
+const handleError = (res, err) => {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+};
 
 const thoughtController = {
 
@@ -10,8 +14,7 @@ const thoughtController = {
             const thoughts = await Thought.find();
             res.status(200).json(thoughts);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            handleError(res, err);
         }
     },
 
@@ -25,8 +28,7 @@ const thoughtController = {
             }
             res.status(200).json(thought);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            handleError(res, err);
         }
     },
 
@@ -42,8 +44,7 @@ const thoughtController = {
             );
             res.status(201).json({ thought, user });
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            handleError(res, err);
         }
     },
 
@@ -61,8 +62,7 @@ const thoughtController = {
             }
             res.status(200).json(thought);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            handleError(res, err);
         }
     },
 
@@ -78,8 +78,7 @@ const thoughtController = {
             }
             res.status(200).json({ message: "Thought and associated reactions successfully deleted."});
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            handleError(res, err);
         }
     },
 
@@ -97,8 +96,7 @@ const thoughtController = {
             }
             res.status(200).json(reaction);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            handleError(res, err);
         }
     },
 
@@ -119,8 +117,7 @@ const thoughtController = {
             }
             res.status(200).json(reaction);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            handleError(res, err);
         }
     }
 };
