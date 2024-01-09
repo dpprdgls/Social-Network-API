@@ -19,7 +19,7 @@ const thoughtController = {
 
     async getThought(req, res) {
         try {
-            const thought = await Thought.findOne(req.params.thoughtId);
+            const thought = await Thought.findOne({ _id: req.params.thoughtId });
             if (!thought) {
                 res.status(404).json({ message: "No thought found" });
             }
@@ -38,7 +38,7 @@ const thoughtController = {
             const user = await User.findByIdAndUpdate(
                 req.body.userId,
                 { $addToSet: {thoughts: thought._id }},
-                { runValidator: true, new: true }
+                { runValidators: true, new: true }
             );
             res.status(201).json({ thought, user });
         } catch (err) {
@@ -52,7 +52,7 @@ const thoughtController = {
     async updateThought(req, res) {
         try {
             const thought = await Thought.findOneAndUpdate(
-                req.params.thoughtId,
+                { _id: req.params.thoughtId },
                 { $set: req.body },
                 { runValidators: true, new: true }
             );
@@ -87,7 +87,7 @@ const thoughtController = {
     async addReaction(req, res){
         try {
             const reaction = await Thought.findOneAndUpdate(
-                req.params.thoughtId,
+                { _id: req.params.thoughtId },
                 { $addToSet: { reactions: req.body }},
                 { runValidators: true }
             );
@@ -104,7 +104,26 @@ const thoughtController = {
 
 ////////////////////////////////////////Delete Reaction\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+    async deleteReaction(req, res) {
+        try {
+            const { thoughtId, reactionId } = req.params;
 
+            const reaction = await Thought.findOneAndUpdate(
+                {_id: thoughtId },
+                { $pull: { reactions: { id: reactionId } } },
+                { runValidators: true, new: true }
+            );
+
+            if (!reaction) {
+                res.status(404).json( { message: "No reaction found" });
+            }
+            res.status(200).json(reaction);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+};
 
 
     
