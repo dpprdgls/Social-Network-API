@@ -102,6 +102,7 @@ const thoughtController = {
                 handleError404(res);
                 return;
             }
+            console.log('Reaction:', reaction);
             res.status(200).json(reaction);
         } catch (err) {
             handleError500(res, err);

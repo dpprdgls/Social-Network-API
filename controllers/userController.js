@@ -31,16 +31,16 @@ const userController = {
 
     async getUser(req, res) {
         try {
-            const user = await User.findOne({ _id: req.params.id })
+            const user = await User.findOne({ _id: req.params.userId })
                 .populate({ path: 'thoughts', select: '-__v' })
                 .populate({ path: 'friends', select: '-__v'});
             
-                if(!user) {
-                    handleError404(res);
-                    return;
-                }
+            if(!user) {
+                handleError404(res);
+                return;
+            }
 
-                res.status(200).json(user);
+            res.status(200).json(user);
             } catch (err) {
                 handleError500(res, err);
             }
@@ -83,7 +83,7 @@ const userController = {
     async deleteUser(req, res) {
         try {
             const user = await User.findOneAndDelete({
-                _id: req.params.thoughtId,
+                _id: req.params.userId,
             });
             if(!user) {
                 handleError404(res);
@@ -133,6 +133,7 @@ const userController = {
                 handleError404(res);
                 return;
             }
+            res.status(200).json(friend);
         } catch (err) {
             handleError500(res, err);
         }
