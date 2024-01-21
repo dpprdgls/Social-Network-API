@@ -117,7 +117,7 @@ const thoughtController = {
 
             const reaction = await Thought.findOneAndUpdate(
                 {_id: thoughtId },
-                { $pull: { reactions: { id: reactionId } } },
+                { $pull: { reactions: { reactionId: reactionId } } },
                 { runValidators: true, new: true }
             );
 
