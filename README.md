@@ -53,7 +53,7 @@
     
     The usage of the application is dependent on running the application in your local environment and using an application like Insomnia or Postman to send requests to the various API end points. 
 
-    ![Usage_gif](https://github.com/dpprdgls/Social-Network-API/blob/a4846d4d298ecaeaeaa567681f03c97be2512565/img/usage_social_1.gif)
+    ![Usage_gif](https://github.com/dpprdgls/Social-Network-API/blob/2f7e9d3656ff9aa8eece65829a2b965583a4cd27/assets/img/usage_social_1.gif)
 
     A demonstration of video can be found here: 
     [Demonstration](https://drive.google.com/file/d/1biXISLT5QK93x5ioURkC1A4_KGi3yqIO/view)
